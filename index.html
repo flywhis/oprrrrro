@@ -72,7 +72,8 @@
             2. Что осталось непонятным или требует разбора? <span class="text-rose-400">*</span>
           </label>
           <p class="text-xs text-slate-400">Укажите вопросы, в которых стоит разобраться подробнее.</p>
-          <textarea id="q2" rows="4" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition resize-none text-sm" placeholder="Например: Хотелось бы еще раз пройтись по формулам..."></textarea>
+          <textarea id="q2" rows="4" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 text-slate-100
+placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition resize-none text-sm" placeholder="Например: Хотелось бы еще раз пройтись по формулам..."></textarea>
           <div id="err2" class="text-rose-400 text-xs hidden">Пожалуйста, заполните это поле или напишите «Всё понятно».</div>
         </div>
 
@@ -125,7 +126,7 @@
       </div>
       <h2 class="text-2xl font-bold text-slate-100">Спасибо за отзыв!</h2>
       <p class="text-slate-400 text-sm max-w-sm mx-auto">
-        Ваши ответы успешно отправлены в Telegram.
+        Ваши ответы помогут сделать следующие занятия еще понятнее и продуктивнее.
       </p>
       <div class="pt-4">
         <button id="resetBtn" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-5 py-2.5 rounded-xl text-sm font-medium transition">
@@ -137,7 +138,8 @@
 
   <!-- Модальное окно QR-кода -->
   <div id="qrModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden fade-in">
-    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 sm:p-8 max-w-sm w-full text-center space-y-4 relative shadow-2xl">
+    <div class="bg-slate-800 border border-slate-700 rou
+nded-2xl p-6 sm:p-8 max-w-sm w-full text-center space-y-4 relative shadow-2xl">
       <button id="closeQrBtn" class="absolute top-4 right-4 text-slate-400 hover:text-white transition text-lg">
         <i class="fa-solid fa-xmark"></i>
       </button>
@@ -159,16 +161,10 @@
   </footer>
 
   <script>
-    // -------------------------------------------------------------
-    // НАСТРОЙКИ TELEGRAM (Данные уже вставлены):
-    // -------------------------------------------------------------
-    const TELEGRAM_BOT_TOKEN = '9262541455:AAE_AB-qdSZL1tNMNHZrVQsc5anYVV2tR7Q'; 
-    const TELEGRAM_CHAT_ID = '2026125998';       
-    // -------------------------------------------------------------
-
     let currentStep = 1;
     let selectedRating = 0;
 
+    // Элементы
     const step1 = document.getElementById('step1');
     const step2 = document.getElementById('step2');
     const step3 = document.getElementById('step3');
@@ -183,11 +179,11 @@
     
     const q1 = document.getElementById('q1');
     const q2 = document.getElementById('q2');
-    const qAuthor = document.getElementById('qAuthor');
     const err1 = document.getElementById('err1');
     const err2 = document.getElementById('err2');
     const err3 = document.getElementById('err3');
 
+    // Навигация
     function updateStep() {
       step1.classList.add('hidden');
       step2.classList.add('hidden');
@@ -246,8 +242,9 @@
       }
     });
 
+    // Рейтинг звёздами
     const stars = document.querySelectorAll('#starRating i');
-stars.forEach(star => {
+    stars.forEach(star => {
       star.addEventListener('click', (e) => {
         selectedRating = parseInt(e.target.getAttribute('data-rating'));
         err3.classList.add('hidden');
@@ -267,48 +264,13 @@ stars.forEach(star => {
       });
     }
 
-    // Отправка формы в Telegram
-    document.getElementById('feedbackForm').addEventListener('submit', async (e) => {
+    // Отправка формы
+    document.getElementById('feedbackForm').addEventListener('submit', (e) => {
       e.preventDefault();
       if (selectedRating === 0) {
         err3.classList.remove('hidden');
         return;
       }
-
-      const starsString = '⭐'.repeat(selectedRating);
-      const authorText = qAuthor.value.trim() ? qAuthor.value.trim() : 'Анонимно';
-      
-      const messageText = 
-`📝 *Новый отзыв по занятию!*
-
-👤 *Автор / Группа:* ${authorText}
-⭐ *Оценка понятности:* ${selectedRating}/5 ${starsString}
-
-1️⃣ *Что было полезно:*
-${q1.value.trim()}
-
-2️⃣ *Что осталось непонятным:*
-${q2.value.trim()}`;
-
-      submitBtn.disabled = true;
-      submitBtn.innerText = 'Отправка...';
-
-      try {
-        await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: TELEGRAM_CHAT_ID,
-            text: messageText,
-            parse_mode: 'Markdown'
-          })
-        });
-      } catch (err) {
-        console.error('Ошибка отправки в Telegram:', err);
-      }
-
-      submitBtn.disabled = false;
-      submitBtn.innerText = 'Отправить';
 
       document.getElementById('formContainer').classList.add('hidden');
       document.getElementById('successScreen').classList.remove('hidden');
@@ -318,7 +280,7 @@ ${q2.value.trim()}`;
     document.getElementById('resetBtn').addEventListener('click', () => {
       q1.value = '';
       q2.value = '';
-      qAuthor.value = '';
+      document.getElementById('qAuthor').value = '';
       selectedRating = 0;
       renderStars(0);
       currentStep = 1;
